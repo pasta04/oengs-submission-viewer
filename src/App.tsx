@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import { ReactComponent as VideoIcon } from './video.svg';
-import { MarathonGameAPI } from './types/oengs';
+import { MarathonGameAPI } from './types/oengus';
 
 const App: React.SFC = () => {
   const [firstProcess, setFirstProcess] = React.useState(true);
