@@ -75,6 +75,7 @@ const App: React.SFC = () => {
           <option value="">-</option>
           <option value="rta1kagawa">RTA 1n Kagawa Online</option>
           <option value="mysrtafes">Mystery Dungeon RTA FES</option>
+          <option value="nagoya">Nagoya RTA Off meeting</option>
         </select>
       </div>
       {/* 応募リスト */}
