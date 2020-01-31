@@ -35,11 +35,11 @@ const App: React.SFC = () => {
     return str;
   };
 
-  const toggleDesc = (genre: 'game' | 'category', id: number) => () => {
+  const toggleDesc = (genre: 'game' | 'category', id: number) => (): void => {
     const dom = document.getElementById(`${genre}_desc_${id}`);
     if (!dom) return;
     const obj = dom.style;
-    obj.display = obj.display == 'none' ? 'block' : 'none';
+    obj.display = obj.display === 'none' ? 'block' : 'none';
   };
 
   // マラソン種別のセレクトボックス選択
@@ -71,7 +71,7 @@ const App: React.SFC = () => {
     <div className="App">
       {/* マラソン種別 */}
       <div style={{ position: 'sticky', top: 0, backgroundColor: '#282c34' }}>
-        <select value={marathonId} onChange={event => setMarathonId(event.target.value)}>
+        <select value={marathonId} onChange={(event): void => setMarathonId(event.target.value)}>
           <option value="">-</option>
           <option value="rta1kagawa">RTA 1n Kagawa Online</option>
           <option value="mysrtafes">Mystery Dungeon RTA FES</option>
@@ -110,19 +110,36 @@ const App: React.SFC = () => {
               {submission.categories.map(category => {
                 return (
                   <div>
-                    <div key={category.id} style={{ display: 'flex' }}>
-                      {/* カテゴリ名 */}
-                      <div style={{ width: 'calc(100% - 90px)' }} onClick={toggleDesc('category', category.id)}>
-                        {category.name}
-                      </div>
+                    <div onClick={toggleDesc('category', category.id)}>
+                      <div key={category.id} style={{ display: 'flex' }}>
+                        {/* カテゴリ名 */}
+                        <div style={{ width: 'calc(100% - 90px)' }}>{category.name}</div>
 
-                      {/* タイム */}
-                      <div style={{ width: 70 }}>{ptToTime(category.estimate)}</div>
-                      {/* 動画リンク */}
-                      <div style={{ width: 20 }}>
-                        <a href={category.video} target="_blank">
-                          <VideoIcon style={{ height: 15, color: '#b58900' }} />
-                        </a>
+                        {/* タイム */}
+                        <div style={{ width: 70 }}>{ptToTime(category.estimate)}</div>
+                        {/* 動画リンク */}
+                        <div style={{ width: 20 }} onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.stopPropagation()}>
+                          <a href={category.video} target="_blank">
+                            <VideoIcon style={{ height: 15, color: '#b58900' }} />
+                          </a>
+                        </div>
+                      </div>
+                      <div>
+                        {category.opponentDtos.map(opp => {
+                          return (
+                            <div key={category.id} style={{ display: 'flex' }}>
+                              {/* レース相手のユーザ名 */}
+                              <div style={{ width: 'calc(100% - 20px)' }}>レース：{opp.user.usernameJapanese ? opp.user.usernameJapanese : opp.user.username}</div>
+
+                              {/* 動画リンク */}
+                              <div style={{ width: 20 }}>
+                                <a href={opp.video} target="_blank">
+                                  <VideoIcon style={{ height: 15, color: '#b58900' }} />
+                                </a>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                     {/* カテゴリ名クリックで展開する、カテゴリ説明 */}

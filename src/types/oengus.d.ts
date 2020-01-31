@@ -40,10 +40,27 @@ type Category = {
   type: string;
   /** レース用のコード。シングルならnull */
   code: string;
-  /** (不明)たぶんレース相手 */
-  opponents: object[];
+  /** たぶんレース相手の動画情報 */
+  opponents: {
+    /** レース参加者ID(ユーザIDではない) */
+    id: number;
+    /** 動画URL */
+    video: string;
+  }[];
   /** (不明)たぶんレース相手のなにか */
-  opponentDtos: object[];
+  opponentDtos: {
+    /** レース参加者ID(ユーザIDではない) */
+    id: number;
+    /** ユーザ情報 */
+    user: User;
+    /** 動画URL */
+    video: string;
+    /** 参加可能時刻 */
+    availabilities: {
+      from: string;
+      to: string;
+    }[];
+  }[];
 };
 
 type User = {
