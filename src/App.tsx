@@ -109,7 +109,7 @@ const selectedToClassName = (status: SelectionStatus): string => {
 
 const MarathonInfoView = (props: { marathon: MarathonAPI; closeFunc: Function }): JSX.Element => {
   return (
-    <div style={{ height: '100%' }}>
+    <div style={{ height: '100%', width: 1000 }}>
       <div style={{ height: 20, textAlign: 'right' }}>
         <input type={'button'} value={'×'} onClick={(): void => props.closeFunc()} />
       </div>
@@ -264,11 +264,11 @@ const App: React.SFC = () => {
               </select>
             </div>
             <div style={{ visibility: marathonInfo ? 'visible' : 'hidden' }}>
-              <div style={{ display: 'flex' }}>
-                <div style={{ width: 'calc(100% - 250px)' }}>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ marginRight: 10 }}>
                   <input type={'button'} value={'概要を見る'} onClick={showMarathonInfo} />
                 </div>
-                <div style={{ width: 'calc(100% - 250px)' }}>
+                <div style={{ marginRight: 10 }}>
                   <input type={'button'} value={'応募の一括開閉'} onClick={toggleOpenClose} />
                 </div>
                 <div style={{ visibility: marathonInfo?.selectionDone ? 'visible' : 'hidden' }}>
