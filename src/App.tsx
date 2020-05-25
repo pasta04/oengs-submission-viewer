@@ -17,6 +17,18 @@ const fetchEventList = async (): Promise<MarathonListAPI> => {
   return await fetchJson<MarathonListAPI>(url);
 };
 
+/** 半年先までのイベント情報を取得 */
+const fetchFutureEventList = async (): Promise<MarathonAPI[]> => {
+  const now = new Date();
+  const start = now.toISOString();
+  // 半年後
+  now.setMonth(now.getMonth() + 6);
+  const end = now.toISOString();
+
+  const url = `${API_BASE}marathon/forDates?start=${start}&end=${end}&zoneId=Asia/Tokyo`;
+  return await fetchJson<MarathonAPI[]>(url);
+};
+
 const fetchEventInfo = (eventId: string): Promise<MarathonAPI> => {
   const url = `${API_BASE}marathon/${eventId}`;
   return fetchJson<MarathonAPI>(url);
@@ -163,7 +175,8 @@ const App: React.SFC = () => {
     const init = async (): Promise<void> => {
       try {
         const eventList = await fetchEventList();
-        const list = [...eventList.live, ...eventList.open, ...eventList.next];
+        const futureList = await fetchFutureEventList();
+        const list = [...eventList.live, ...eventList.open, ...eventList.next, ...futureList];
         // IDでユニーク
         const newList = filterUniqueItemsById(list, 'id');
 
