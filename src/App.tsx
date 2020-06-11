@@ -253,6 +253,12 @@ const App: React.SFC = () => {
   };
   const closeMarathonInfo = (): void => setIsShowMarathonInfo(false);
 
+  const [sortType, setSortType] = React.useState(0);
+  const changeSort = (event: React.ChangeEvent<HTMLSelectElement>): void => {
+    const sortType = Number(event.target.value);
+    setSortType(sortType);
+  };
+
   return (
     <div className="App">
       {/* マラソン情報 */}
@@ -284,6 +290,13 @@ const App: React.SFC = () => {
                 <div style={{ marginRight: 10 }}>
                   <input type={'button'} value={'応募の一括開閉'} onClick={toggleOpenClose} />
                 </div>
+                <div>
+                  <select onChange={changeSort} value={sortType}>
+                    <option value={0}>応募順</option>
+                    <option value={1}>ゲーム名-昇順</option>
+                    <option value={2}>ゲーム名-降順</option>
+                  </select>
+                </div>
                 <div style={{ visibility: marathonInfo?.selectionDone ? 'visible' : 'hidden' }}>
                   <label htmlFor="filter_check">当選のみ</label>
                   <input id="filter_check" type={'checkbox'} onChange={(): void => setFilterReject(!filterReject)} checked={filterReject} />
@@ -296,113 +309,132 @@ const App: React.SFC = () => {
           <div style={{ textAlign: 'left', display: 'flex', justifyContent: 'center' }}>
             <div style={{ display: 'block', width: 1000 }}>
               <div className="message">{message}</div>
-              {submissionList.map(submission => {
-                // 採用されたカテゴリがあれば色をつける
-                let gameClass = '';
-                const selectedResult = {
-                  TODO: 0,
-                  VALIDATED: 0,
-                  REJECTED: 0,
-                  BONUS: 0,
-                };
-                for (const category of submission.categories) {
-                  if (selectionList[category.id]) {
-                    selectedResult[selectionList[category.id].status] += 1;
-                  } else {
-                    selectedResult.TODO += 1;
+              {submissionList
+                .sort((a, b) => {
+                  switch (sortType) {
+                    case 1:
+                      if (a.name > b.name) return 1;
+                      if (a.name < b.name) return -1;
+                      return 0;
+                    case 2:
+                      if (a.name < b.name) return 1;
+                      if (a.name > b.name) return -1;
+                      return 0;
+                    default:
+                      if (a.id > b.id) return 1;
+                      if (a.id < b.id) return -1;
+                      return 0;
                   }
-                }
-                if (selectedResult.VALIDATED > 0) {
-                  gameClass = 'validated';
-                } else if (selectedResult.BONUS > 0) {
-                  gameClass = 'bonus';
-                } else if (selectedResult.TODO > 0) {
-                  gameClass = '';
-                } else {
-                  gameClass = 'rejected';
-                }
-                // フィルターオンで、採用されたカテゴリが0件
-                if (filterReject && selectedResult.REJECTED === submission.categories.length) return '';
+                })
+                .map(submission => {
+                  // 採用されたカテゴリがあれば色をつける
+                  let gameClass = '';
+                  const selectedResult = {
+                    TODO: 0,
+                    VALIDATED: 0,
+                    REJECTED: 0,
+                    BONUS: 0,
+                  };
+                  for (const category of submission.categories) {
+                    if (selectionList[category.id]) {
+                      selectedResult[selectionList[category.id].status] += 1;
+                    } else {
+                      selectedResult.TODO += 1;
+                    }
+                  }
+                  if (selectedResult.VALIDATED > 0) {
+                    gameClass = 'validated';
+                  } else if (selectedResult.BONUS > 0) {
+                    gameClass = 'bonus';
+                  } else if (selectedResult.TODO > 0) {
+                    gameClass = '';
+                  } else {
+                    gameClass = 'rejected';
+                  }
+                  // フィルターオンで、採用されたカテゴリが0件
+                  if (filterReject && selectedResult.REJECTED === submission.categories.length) return '';
 
-                return (
-                  <div key={submission.id} className={`submissionBase`}>
-                    <div className={gameClass} onClick={toggleDesc('game', submission.id)}>
-                      {/* ゲームタイトル */}
-                      <div style={{ display: 'flex' }}>
-                        <div style={{ width: 70 }}>ゲーム：</div>
-                        <div style={{ width: 'calc(100% - 70px)' }}>{submission.name}</div>
+                  return (
+                    <div key={submission.id} className={`submissionBase`}>
+                      <div className={gameClass}>
+                        <div onClick={toggleDesc('game', submission.id)}>
+                          {/* ゲームタイトル */}
+                          <div style={{ display: 'flex' }}>
+                            <div style={{ width: 70 }}>ゲーム：</div>
+                            <div style={{ width: 'calc(100% - 70px)' }}>{submission.name}</div>
+                          </div>
+                          {/* 走者 */}
+                          <div style={{ display: 'flex' }}>
+                            <div style={{ width: 70 }}>走者：</div>
+                            <div style={{ width: 'calc(100% - 70px)' }}>{submission.user.usernameJapanese ? submission.user.usernameJapanese : submission.user.username}</div>
+                          </div>
+                          {/* 機種 */}
+                          <div style={{ display: 'flex' }}>
+                            <div style={{ width: 70 }}>機種：</div>
+                            <div style={{ width: 'calc(100% - 70px)' }}>{submission.console}</div>
+                          </div>
+                        </div>
+                        {/* 説明 */}
+                        <div id={`game_desc_${submission.id}`} style={{ display: 'none', clear: 'both' }}>
+                          {submission.description}
+                        </div>
                       </div>
-                      {/* 走者 */}
-                      <div style={{ display: 'flex' }}>
-                        <div style={{ width: 70 }}>走者：</div>
-                        <div style={{ width: 'calc(100% - 70px)' }}>{submission.user.usernameJapanese ? submission.user.usernameJapanese : submission.user.username}</div>
-                      </div>
-                      {/* 機種 */}
-                      <div style={{ display: 'flex' }}>
-                        <div style={{ width: 70 }}>機種：</div>
-                        <div style={{ width: 'calc(100% - 70px)' }}>{submission.console}</div>
-                      </div>
-                      {/* 説明 */}
-                      <div id={`game_desc_${submission.id}`} style={{ display: 'none', clear: 'both' }}>
-                        {submission.description}
-                      </div>
-                    </div>
-                    <hr />
+                      <hr />
 
-                    {/* カテゴリ */}
-                    {submission.categories.map(category => {
-                      // 選考結果
-                      const result = selectionList[category.id] ? selectionList[category.id].status : 'TODO';
-                      if (filterReject && result === 'REJECTED') return '';
-                      const categoryClass = selectedToClassName(result);
+                      {/* カテゴリ */}
+                      {submission.categories.map(category => {
+                        // 選考結果
+                        const result = selectionList[category.id] ? selectionList[category.id].status : 'TODO';
+                        if (filterReject && result === 'REJECTED') return '';
+                        const categoryClass = selectedToClassName(result);
 
-                      return (
-                        <div key={category.id} className={categoryClass}>
-                          <div onClick={toggleDesc('category', category.id)}>
-                            <div key={category.id} style={{ display: 'flex' }}>
-                              {/* カテゴリ名 */}
-                              <div className={'categoryName'}>{category.name}</div>
+                        return (
+                          <div key={category.id} className={categoryClass}>
+                            <div onClick={toggleDesc('category', category.id)}>
+                              <div key={category.id} style={{ display: 'flex' }}>
+                                {/* カテゴリ名 */}
+                                <div className={'categoryName'}>{category.name}</div>
 
-                              {/* タイム */}
-                              <div style={{ width: 70 }}>{ptToTime(category.estimate)}</div>
-                              {/* 動画リンク */}
-                              <div style={{ width: 20 }} onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.stopPropagation()}>
-                                <a href={category.video} target="_blank" rel="noopener noreferrer">
-                                  <VideoIcon style={{ height: 15, color: '#b58900' }} />
-                                </a>
+                                {/* タイム */}
+                                <div style={{ width: 70 }}>{ptToTime(category.estimate)}</div>
+                                {/* 動画リンク */}
+                                <div style={{ width: 20 }} onClick={(e: React.MouseEvent<HTMLDivElement>): void => e.stopPropagation()}>
+                                  <a href={category.video} target="_blank" rel="noopener noreferrer">
+                                    <VideoIcon style={{ height: 15, color: '#b58900' }} />
+                                  </a>
+                                </div>
+                              </div>
+                              <div>
+                                {category.opponentDtos.map(opp => {
+                                  return (
+                                    <div key={`${category.id}_${opp.id}`} style={{ display: 'flex' }}>
+                                      {/* レース相手のユーザ名 */}
+                                      <div style={{ width: 'calc(100% - 20px)' }}>
+                                        {category.type}：{opp.user.usernameJapanese ? opp.user.usernameJapanese : opp.user.username}
+                                      </div>
+
+                                      {/* 動画リンク */}
+                                      <div style={{ width: 20 }}>
+                                        <a href={opp.video} target="_blank" rel="noopener noreferrer">
+                                          <VideoIcon style={{ height: 15, color: '#b58900' }} />
+                                        </a>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </div>
-                            <div>
-                              {category.opponentDtos.map(opp => {
-                                return (
-                                  <div key={`${category.id}_${opp.id}`} style={{ display: 'flex' }}>
-                                    {/* レース相手のユーザ名 */}
-                                    <div style={{ width: 'calc(100% - 20px)' }}>
-                                      {category.type}：{opp.user.usernameJapanese ? opp.user.usernameJapanese : opp.user.username}
-                                    </div>
-
-                                    {/* 動画リンク */}
-                                    <div style={{ width: 20 }}>
-                                      <a href={opp.video} target="_blank" rel="noopener noreferrer">
-                                        <VideoIcon style={{ height: 15, color: '#b58900' }} />
-                                      </a>
-                                    </div>
-                                  </div>
-                                );
-                              })}
+                            {/* カテゴリ名クリックで展開する、カテゴリ説明 */}
+                            <div id={`category_desc_${category.id}`} style={{ display: 'none', clear: 'both' }}>
+                              {category.description}
                             </div>
+                            <hr className={'categoryLine'} />
                           </div>
-                          {/* カテゴリ名クリックで展開する、カテゴリ説明 */}
-                          <div id={`category_desc_${category.id}`} style={{ display: 'none', clear: 'both' }}>
-                            {category.description}
-                          </div>
-                          <hr className={'categoryLine'} />
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
+                        );
+                      })}
+                    </div>
+                  );
+                })}
             </div>
           </div>
         </div>
