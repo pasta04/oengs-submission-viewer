@@ -285,20 +285,22 @@ const App: React.SFC = () => {
             <div style={{ visibility: marathonInfo ? 'visible' : 'hidden' }}>
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <div style={{ marginRight: 10 }}>
-                  <input type={'button'} value={'概要を見る'} onClick={showMarathonInfo} />
+                  <input type={'button'} value={'概要'} onClick={showMarathonInfo} />
                 </div>
                 <div style={{ marginRight: 10 }}>
-                  <input type={'button'} value={'応募の一括開閉'} onClick={toggleOpenClose} />
+                  <input type={'button'} value={'一括開閉'} onClick={toggleOpenClose} />
                 </div>
                 <div>
-                  <select onChange={changeSort} value={sortType}>
+                  <select style={{ width: 70 }} onChange={changeSort} value={sortType}>
                     <option value={0}>応募順</option>
                     <option value={1}>ゲーム名-昇順</option>
                     <option value={2}>ゲーム名-降順</option>
                   </select>
                 </div>
                 <div style={{ visibility: marathonInfo?.selectionDone ? 'visible' : 'hidden' }}>
-                  <label htmlFor="filter_check">当選のみ</label>
+                  <label style={{ fontSize: 12 }} htmlFor="filter_check">
+                    当選のみ
+                  </label>
                   <input id="filter_check" type={'checkbox'} onChange={(): void => setFilterReject(!filterReject)} checked={filterReject} />
                 </div>
               </div>
