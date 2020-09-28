@@ -356,6 +356,11 @@ const App: React.SFC = () => {
                   // フィルターオンで、採用されたカテゴリが0件
                   if (filterReject && selectedResult.REJECTED === submission.categories.length) return '';
 
+                  let usernameDisp = '★取得失敗★';
+                  if (submission.user) {
+                    usernameDisp = submission.user.usernameJapanese ? submission.user.usernameJapanese : submission.user.username;
+                  }
+
                   return (
                     <div key={submission.id} className={`submissionBase`}>
                       <div className={gameClass}>
@@ -368,7 +373,7 @@ const App: React.SFC = () => {
                           {/* 走者 */}
                           <div style={{ display: 'flex' }}>
                             <div style={{ width: 70 }}>走者：</div>
-                            <div style={{ width: 'calc(100% - 70px)' }}>{submission.user.usernameJapanese ? submission.user.usernameJapanese : submission.user.username}</div>
+                            <div style={{ width: 'calc(100% - 70px)' }}>{usernameDisp}</div>
                           </div>
                           {/* 機種 */}
                           <div style={{ display: 'flex' }}>
@@ -408,11 +413,16 @@ const App: React.SFC = () => {
                               </div>
                               <div>
                                 {category.opponentDtos.map(opp => {
+                                  let usernameDisp = '★取得失敗★';
+                                  if (opp.user) {
+                                    usernameDisp = opp.user.usernameJapanese ? opp.user.usernameJapanese : opp.user.username;
+                                  }
+
                                   return (
                                     <div key={`${category.id}_${opp.id}`} style={{ display: 'flex' }}>
                                       {/* レース相手のユーザ名 */}
                                       <div style={{ width: 'calc(100% - 20px)' }}>
-                                        {category.type}：{opp.user.usernameJapanese ? opp.user.usernameJapanese : opp.user.username}
+                                        {category.type}：{usernameDisp}
                                       </div>
 
                                       {/* 動画リンク */}
