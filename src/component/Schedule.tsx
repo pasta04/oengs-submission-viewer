@@ -54,15 +54,27 @@ const App: React.FC<Props> = (props: Props) => {
           {lines.map((game, index) => {
             if (((game as unknown) as ScheduleAPI['lines'][0]).id) {
               const game1 = (game as unknown) as ScheduleAPI['lines'][0];
+              let title = game1.gameName;
+              let time = game1.estimate;
+              if (game1.setupBlock) {
+                if (game1.setupBlockText) {
+                  title = game1.setupBlockText;
+                } else {
+                  title = 'セットアップブロック';
+                }
+
+                time = game1.setupTime;
+              }
+
               return (
                 <div className="scheduleLine" key={index}>
                   <div className="scheduleMain">
                     <div className="scheduleDate">{util.formatDate(new Date(game1.date), 'HH:mm')}</div>
-                    <div className="scheduleGame">{game1.gameName}</div>
+                    <div className="scheduleGame">{title}</div>
                   </div>
                   <div className="scheduleSub">
                     <div className="scheduleCategory">{game1.categoryName}</div>
-                    <div className="scheduleEst">{util.ptToTime(game1.estimate)}</div>
+                    <div className="scheduleEst">{util.ptToTime(time)}</div>
                   </div>
                   <div className="scheduleSub">
                     <hr className="scheduleBorder" />
