@@ -95,7 +95,7 @@ export type SelectionAPI = {
     status: SelectionStatus;
   };
 };
-export type SelectionStatus = 'TODO' | 'VALIDATED' | 'REJECTED' | 'BONUS';
+export type SelectionStatus = 'TODO' | 'VALIDATED' | 'REJECTED' | 'BONUS' | 'BACKUP';
 
 export type AnswerAPI = {
   id: number;
@@ -223,4 +223,26 @@ type Questions = {
   /** FREETEXT用の文章 */
   description: string | null;
   position: number;
+};
+
+export type ScheduleAPI = {
+  id: number;
+  lines: {
+  categoryId: number;
+  categoryName: string;
+  console: string;
+  customRun: boolean;
+  date: string;
+  emulated: boolean;
+  estimate: string;
+  gameName: string;
+  id: number;
+  position: number;
+  ratio: string;
+  runners: User[];
+  setupBlock: boolean;
+  setupBlockText: string | null;
+  setupTime: string;
+  type: CategoryType;
+  }[];
 };
