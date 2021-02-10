@@ -2,7 +2,7 @@ import React from 'react';
 import * as util from '../util';
 import './App.css';
 import { ReactComponent as VideoIcon } from './video.svg';
-import { MarathonGameAPI, MarathonAPI, MarathonListAPI, SelectionAPI, SelectionStatus, MarathonInfo, ScheduleAPI } from '../types/oengus';
+import { MarathonGameAPI, MarathonAPI, MarathonListAPI, SelectionAPI, SelectionStatus, MarathonInfo, ScheduleAPI, MarathonSubmissionAPI, Game } from '../types/oengus';
 import MarathonInfoView from './MarathonInfo';
 import Schedule from './Schedule';
 
@@ -36,9 +36,21 @@ const fetchEventInfo = (eventId: string): Promise<MarathonAPI> => {
   return fetchJson<MarathonAPI>(url);
 };
 
-const fetchEventGameList = (eventId: string): Promise<MarathonGameAPI> => {
-  const url = `${API_BASE}marathon/${eventId}/game`;
-  return fetchJson<MarathonGameAPI>(url);
+const fetchEventGameList = async (eventId: string): Promise<MarathonGameAPI> => {
+  const url = `${API_BASE}marathon/${eventId}/submissions`;
+  const submissionList = await fetchJson<MarathonSubmissionAPI>(url);
+  const list: MarathonGameAPI = [];
+  submissionList.map(submission => {
+    submission.games.map(game => {
+      const g: Game = {
+        ...game,
+        user: submission.user,
+      };
+      list.push(g);
+    });
+  });
+
+  return list;
 };
 
 const fetchSelectionList = (eventId: string): Promise<SelectionAPI> => {

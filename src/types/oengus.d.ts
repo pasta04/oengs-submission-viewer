@@ -1,4 +1,28 @@
 export type MarathonGameAPI = Game[];
+export type MarathonSubmissionAPI = {
+  id: number;
+  user: User;
+  games: Omit<Game, 'user'>[];
+  availabilities: {
+    from: string;
+    to: string;
+  }[];
+  answers: {
+    id: number;
+    question: Questions;
+    /**
+     * 回答
+     * @description チェックボックスの場合は、文字列で"true"になる。
+     */
+    answer: string | null;
+    /** 必須項目か */
+    answerRequired: boolean;
+  }[];
+  opponents: null;
+  opponentDtos: null;
+  user: User;
+}[];
+
 export type MarathonListAPI = {
   next: MarathonInfo[];
   open: MarathonInfo[];
@@ -96,26 +120,6 @@ export type SelectionAPI = {
   };
 };
 export type SelectionStatus = 'TODO' | 'VALIDATED' | 'REJECTED' | 'BONUS' | 'BACKUP';
-
-export type AnswerAPI = {
-  id: number;
-  user: User;
-  games: null;
-  availabilities: null;
-  answers: {
-    id: number;
-    question: Questions;
-    /**
-     * 回答
-     * @description チェックボックスの場合は、文字列で"true"になる。
-     */
-    answer: string | null;
-    /** 必須項目か */
-    answerRequired: boolean;
-  }[];
-  opponents: null;
-  opponentDtos: null;
-}[];
 
 export type MarathonInfo = Pick<MarathonAPI, 'id' | 'name' | 'startDate' | 'endDate' | 'onsite' | 'location' | 'country' | 'language'>;
 
@@ -228,21 +232,21 @@ type Questions = {
 export type ScheduleAPI = {
   id: number;
   lines: {
-  categoryId: number;
-  categoryName: string;
-  console: string;
-  customRun: boolean;
-  date: string;
-  emulated: boolean;
-  estimate: string;
-  gameName: string;
-  id: number;
-  position: number;
-  ratio: string;
-  runners: User[];
-  setupBlock: boolean;
-  setupBlockText: string | null;
-  setupTime: string;
-  type: CategoryType;
+    categoryId: number;
+    categoryName: string;
+    console: string;
+    customRun: boolean;
+    date: string;
+    emulated: boolean;
+    estimate: string;
+    gameName: string;
+    id: number;
+    position: number;
+    ratio: string;
+    runners: User[];
+    setupBlock: boolean;
+    setupBlockText: string | null;
+    setupTime: string;
+    type: CategoryType;
   }[];
 };
