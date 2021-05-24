@@ -15,7 +15,7 @@ async function fetchJson<T>(url: string): Promise<T> {
 }
 
 const fetchEventList = async (): Promise<MarathonListAPI> => {
-  const url = `${API_BASE}marathon`;
+  const url = `${API_BASE}marathons`;
   return await fetchJson<MarathonListAPI>(url);
 };
 
@@ -27,17 +27,17 @@ const fetchFutureEventList = async (): Promise<MarathonAPI[]> => {
   now.setMonth(now.getMonth() + 6);
   const end = now.toISOString();
 
-  const url = `${API_BASE}marathon/forDates?start=${start}&end=${end}&zoneId=Asia/Tokyo`;
+  const url = `${API_BASE}marathons/forDates?start=${start}&end=${end}&zoneId=Asia/Tokyo`;
   return await fetchJson<MarathonAPI[]>(url);
 };
 
 const fetchEventInfo = (eventId: string): Promise<MarathonAPI> => {
-  const url = `${API_BASE}marathon/${eventId}`;
+  const url = `${API_BASE}marathons/${eventId}`;
   return fetchJson<MarathonAPI>(url);
 };
 
 const fetchEventGameList = async (eventId: string): Promise<MarathonGameAPI> => {
-  const url = `${API_BASE}marathon/${eventId}/submissions`;
+  const url = `${API_BASE}marathons/${eventId}/submissions`;
   const submissionList = await fetchJson<MarathonSubmissionAPI>(url);
   const list: MarathonGameAPI = [];
   submissionList.map(submission => {
@@ -54,12 +54,12 @@ const fetchEventGameList = async (eventId: string): Promise<MarathonGameAPI> => 
 };
 
 const fetchSelectionList = (eventId: string): Promise<SelectionAPI> => {
-  const url = `${API_BASE}marathon/${eventId}/selection`;
+  const url = `${API_BASE}marathons/${eventId}/selection`;
   return fetchJson<SelectionAPI>(url);
 };
 
 const fetchScheduleList = (eventId: string): Promise<ScheduleAPI> => {
-  const url = `${API_BASE}marathon/${eventId}/schedule`;
+  const url = `${API_BASE}marathons/${eventId}/schedule`;
   return fetchJson<ScheduleAPI>(url);
 };
 
